@@ -2,6 +2,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import {
   getFirestore,
   collection,
@@ -15,6 +16,10 @@ import {
 import { getFirestore, collection, addDoc, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 >>>>>>> d6f0686771d9d85d43b0e0205cf6a3fdd81866d6
+=======
+import {getFirestore,collection,addDoc,getDocs,onSnapshot,deleteDoc,doc}
+ from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+>>>>>>> 6353d9bbf089d51e56d713a003aa0a6f2aae3ef0
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -40,10 +45,14 @@ const nom = document.querySelector("#lastname");
 const note = document.querySelector("#score");
 const moyenne = document.querySelector("#average");
 const rslt = document.querySelector("#result");
+<<<<<<< HEAD
 const tbody = document.querySelector("#tbody");
 
 // Déclaration des variables
 const filtre = document.getElementById("inputFilter");
+=======
+const tbody = document.querySelector("#tbody")
+>>>>>>> 6353d9bbf089d51e56d713a003aa0a6f2aae3ef0
 
 // Selecteur Card
 const nbrEtd = document.querySelector("#nbrEtudiants");
@@ -51,7 +60,11 @@ const someEtd = document.querySelector("#SommeNotes");
 const moyenneetd = document.querySelector("#MoyenPlusGrand");
 
 // Déclaration des variables
+<<<<<<< HEAD
 
+=======
+const filtre = document.getElementById("inputFilter");
+>>>>>>> 6353d9bbf089d51e56d713a003aa0a6f2aae3ef0
 
 // ==================================
 //         Evenement boutton
@@ -113,6 +126,13 @@ async function ajouterEtudiant(name, lastname, score, average) {
         moyenne: parseInt(average.value)
     });
     reccuperInfoEtudiant();
+<<<<<<< HEAD
+=======
+    prenom.value = "";
+    nom.value = "";
+    note.value = "";
+    moyenne.value = "";
+>>>>>>> 6353d9bbf089d51e56d713a003aa0a6f2aae3ef0
 }
 
 // Fonction Affiche Tableau
@@ -136,11 +156,73 @@ function AfficheEtudiants(tab) {
                 `;
     }
   }
+<<<<<<< HEAD
   tbody.innerHTML = tableList;
 }
+=======
+
+    tbody.innerHTML = tableList;
+    AfficheCard(tab) 
+}
+
+// Fonction detail
+window.detailEtd = function (indice) {
+    const colRef = collection(db, "etudiants");
+
+    // Écoutez les changements
+    onSnapshot(colRef, (snapshot) => {
+        
+    let etudians = [];
+    
+      snapshot.forEach((doc) => {
+        etudians.push({...doc.data(),id:doc.id})
+      });   
+    
+      document.querySelector("#prenomDetail").innerText = etudians[indice].prenom;
+      document.querySelector("#nomDetail").innerText = etudians[indice].nom;
+      document.querySelector("#noteDetail").innerText = etudians[indice].note;
+      document.querySelector("#moyenneDetail").innerText = etudians[indice].moyenne;
+
+    });
+}
+
+// afficher les infos dans le card
+function AfficheCard(tab) {
+    // Déclaration des variable necessaire pour l'affichage de card
+    let sommeNote = 0;
+    let tabMoyenne = [];
+
+
+    for (let i = 0; i < tab.length; i++) {
+        sommeNote += parseInt(tab[i].note);
+        tabMoyenne.push(parseInt(tab[i].moyenne));
+    }
+
+    let max = Math.max(...tabMoyenne);
+
+    someEtd.innerText = sommeNote;
+    // moyennePlusGrand.innerText = max
+    nbrEtd.innerText = tab.length;
+
+    if (max == "-Infinity") {
+        moyenneetd.innerText = 0;
+    } else {
+        moyenneetd.innerText = max;
+    }
+}
+
+>>>>>>> 6353d9bbf089d51e56d713a003aa0a6f2aae3ef0
 
  window.detailDelate = async function (indice) {
-    etudians.forEach(async (element)=>{
+
+    const colRef = collection(db, "etudiants");
+    let etudians = [];
+    // Écoutez les changements
+    onSnapshot(colRef, (snapshot) => {
+      snapshot.forEach((doc) => {
+        etudians.push({...doc.data(),id:doc.id})
+      });  
+      etudians.forEach(async (element)=>{
         if (
           element.nom === etudians[indice].nom &&
           element.prenom === etudians[indice].prenom &&
@@ -156,6 +238,7 @@ function AfficheEtudiants(tab) {
                 }
         }
     })
+    });
  }
 
   // Fonction pour filtrer les étudiants
@@ -173,6 +256,7 @@ function AfficheEtudiants(tab) {
     });
   }
   filtre.addEventListener("input", rechercheFilter);
+<<<<<<< HEAD
     AfficheCard(tab) 
 
 // Fonction detail
@@ -207,3 +291,5 @@ function AfficheCard(tab) {
         moyenneetd.innerText = max;
     }
 }
+=======
+>>>>>>> 6353d9bbf089d51e56d713a003aa0a6f2aae3ef0
