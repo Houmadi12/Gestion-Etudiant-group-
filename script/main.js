@@ -71,7 +71,7 @@ btn.addEventListener("click", (e) => {
     ajouterEtudiant(prenom, nom, note, moyenne);
     rslt.innerHTML = "Enregistrement reussi";
     rslt.classList.add("text-success");
-    setTimeout(() => {rslt.innerHTML = "Veuillez re-enregistre"},"1000");
+    setTimeout(() => {rslt.innerHTML = "Veuillez re-enregistrer"},"1000");
   } else {
     rslt.innerHTML = "Remplissage des champs obligatoire";
     rslt.classList.add("text-danger");
@@ -145,6 +145,7 @@ function AfficheEtudiants(tab) {
   }
   card(tab);
   tbody.innerHTML = tableList;
+  
 }
 
 function NombreEtudiant() {
@@ -202,7 +203,7 @@ function card(tab) {
   let Tableau = [];
   let somme = 0;
   for (let i = 0; i < tab.length; i++) {
-    somme += tab[i].note;
+    somme += parseInt(tab[i].note);
     Tableau.push(parseInt(tab[i].moyenne));
   }
 
@@ -303,4 +304,69 @@ filtre.addEventListener("input", rechercheFilter);
 
 
 
+// --------------------------pagination------
+let allStudents = [];
+let actuelPage = 1;
+const studentsPerPage = 5;
 
+async function reccuperInfo() {
+  try {
+    const colRef = collection(db, "etudiants");
+    const snapshot = await getDocs(colRef);
+
+    allStudents = [];
+    snapshot.forEach((doc) => {
+      allStudents.push({ ...doc.data(), id: doc.id });
+    });
+
+    // Afficher la première page des étudiants
+    afficherEtudiants(allStudents);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des étudiants :", error);
+  }
+}
+
+reccuperInfo();
+
+function afficherEtudiants() {
+  // Calculer les indices de début et de fin pour la page actuelle
+  const startIndex = (actuelPage - 1) * studentsPerPage;
+  const endIndex = startIndex + studentsPerPage;
+
+  // Découper le tableau pour obtenir la page actuelle des étudiants
+  const paginatedStudents = allStudents.slice(startIndex, endIndex);
+
+  // Afficher les étudiants dans le tableau
+  AfficheEtudiants(paginatedStudents);
+
+  // Mettre à jour les contrôles de pagination
+  mettreAJourControlesPagination();
+}
+
+function mettreAJourControlesPagination() {
+  const totalPages = Math.ceil(allStudents.length / studentsPerPage);
+
+  // Mettre à jour les boutons Précédent et Suivant
+  document.getElementById('prevPage').disabled = actuelPage === 1;
+  document.getElementById('nextPage').disabled = actuelPage === totalPages;
+
+  // Mettre à jour l'affichage du numéro de la page
+  document.getElementById("pageInfo").innerText = `Page ${actuelPage} sur ${totalPages}`;
+}
+
+document.getElementById('prevPage').addEventListener('click', () => {
+  if (actuelPage > 1) {
+    actuelPage--;
+    afficherEtudiants();
+  }
+});
+
+document.getElementById('nextPage').addEventListener('click', () => {
+  const totalPages = Math.ceil(allStudents.length / studentsPerPage);
+  if (actuelPage< totalPages) {
+    actuelPage++;
+    afficherEtudiants();
+  }
+});
+
+  
