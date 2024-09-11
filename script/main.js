@@ -56,7 +56,7 @@ btn.addEventListener("click", (e) => {
         rslt.classList.add("text-danger");
     }
     // Vider les input
-    prenom.value = "";
+    prenom.value = ""
     nom.value = "";
     note.value = "";
     moyenne.value = "";
@@ -81,7 +81,7 @@ async function reccuperInfoEtudiant() {
         etudians.push({...doc.data(),id:doc.id})
       });   
       console.log(etudians);
-      AfficheEtudiants(etudians);
+      AfficheEtudiants(etudians)
     });
     
 }
@@ -101,7 +101,7 @@ async function ajouterEtudiant(name, lastname, score, average) {
     prenom.value = "";
     nom.value = "";
     note.value = "";
-    moyenne.value = "";
+    moyenne.value = ""
 }
 
 // Fonction Affiche Tableau
@@ -137,7 +137,7 @@ window.detailEtd = function (indice) {
     // Écoutez les changements
     onSnapshot(colRef, (snapshot) => {
         
-    let etudians = [];
+    let etudians = []
     
       snapshot.forEach((doc) => {
         etudians.push({...doc.data(),id:doc.id})
@@ -172,7 +172,7 @@ function AfficheCard(tab) {
     if (max == "-Infinity") {
         moyenneetd.innerText = 0;
     } else {
-        moyenneetd.innerText = max;
+        moyenneetd.innerText = max
     }
 }
 
@@ -198,7 +198,7 @@ function AfficheCard(tab) {
                     reccuperInfoEtudiant();
                     console.log("Document supprimé avec succès.");
                 } catch (error) {
-                    console.error("Erreur lors de la suppression du document : ", error);
+                    console.error("Erreur lors de la suppression du document : ", error)
                 }
         }
     })
