@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
+<<<<<<< HEAD
 import {
   getFirestore,
   collection,
@@ -10,6 +11,10 @@ import {
   deleteDoc,
   doc
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+=======
+import { getFirestore, collection, addDoc, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+
+>>>>>>> d6f0686771d9d85d43b0e0205cf6a3fdd81866d6
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -38,39 +43,40 @@ const rslt = document.querySelector("#result");
 const tbody = document.querySelector("#tbody");
 
 // Déclaration des variables
-let etudians = [];
 const filtre = document.getElementById("inputFilter");
+
+// Selecteur Card
+const nbrEtd = document.querySelector("#nbrEtudiants");
+const someEtd = document.querySelector("#SommeNotes");
+const moyenneetd = document.querySelector("#MoyenPlusGrand");
+
+// Déclaration des variables
+
 
 // ==================================
 //         Evenement boutton
 // ==================================
 
-// Reccuperation des donnée firebase
-
-
 // Evenement Ajouter étudiant
 btn.addEventListener("click", (e) => {
-  e.preventDefault();
-  if (
-    prenom.value !== "" &&
-    nom.value !== "" &&
-    note.value !== "" &&
-    moyenne.value !== ""
-  ) {
-    ajouterEtudiant(prenom, nom, note, moyenne);
-    rslt.innerHTML = "Enregistrement reussi";
-    rslt.classList.add("text-success");
-  } else {
-    rslt.innerHTML = "Remplissage des champs obligatoire";
-    rslt.classList.add("text-danger");
-  }
-  AfficheEtudiants(etudians);
-  // Vider les input
-  prenom.value = "";
-  nom.value = "";
-  note.value = "";
-  moyenne.value = "";
-});
+    e.preventDefault();
+    if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
+
+        ajouterEtudiant(prenom, nom, note, moyenne);
+        rslt.innerHTML = "Enregistrement reussi"
+        rslt.classList.add("text-success");
+
+    } else {
+        rslt.innerHTML = "Remplissage des champs obligatoire"
+        rslt.classList.add("text-danger");
+    }
+    // Vider les input
+    prenom.value = "";
+    nom.value = "";
+    note.value = "";
+    moyenne.value = "";
+})
+
 
 // =======================================
 //             Fonctions
@@ -79,40 +85,45 @@ btn.addEventListener("click", (e) => {
 // Reccuperation des donnée
 async function reccuperInfoEtudiant() {
 
-  try {
-    let liste = collection(db, "etudiants");
-    const snapshot = await getDocs(liste);
-       snapshot.docs.forEach((doc) => {
-         etudians.push({ ...doc.data(), id: doc.id });
-       });
-    AfficheEtudiants(etudians);
-  } catch (e) {
-    console.error("Erreur: ", e);
-  }
+    const colRef = collection(db, "etudiants");
+
+    // Écoutez les changements
+    onSnapshot(colRef, (snapshot) => {
+        
+    let etudians = [];
+    
+      snapshot.forEach((doc) => {
+        etudians.push({...doc.data(),id:doc.id})
+      });   
+      console.log(etudians);
+      AfficheEtudiants(etudians);
+    });
+    
 }
+
 reccuperInfoEtudiant();
+
 // Fonction d'ajout d'un étudiant
 async function ajouterEtudiant(name, lastname, score, average) {
-  // Add a new document with a generated id.
-  const docRef = await addDoc(collection(db, "etudiants"), {
-    prenom: name.value,
-    nom: lastname.value,
-    note: parseInt(score.value),
-    moyenne: parseInt(average.value),
-  });
-//   reccuperInfoEtudiant();
-  AfficheEtudiants(etudians);
-  console.log("Document written with ID: ", docRef.id);
+    // Add a new document with a generated id.
+    const docRef = await addDoc(collection(db, "etudiants"), {
+        prenom: name.value,
+        nom: lastname.value,
+        note: parseInt(score.value),
+        moyenne: parseInt(average.value)
+    });
+    reccuperInfoEtudiant();
 }
 
 // Fonction Affiche Tableau
 function AfficheEtudiants(tab) {
-  const tbody = document.querySelector("#tbody");
-  let tableList = "";
-  for (let i = 0; i < tab.length; i++) {
-    let index = i;
-    if (i < tab.length) {
-      tableList += `
+    const tbody = document.querySelector("#tbody");
+
+    let tableList = '';
+    for (let i = 0; i < tab.length; i++) {
+        let index = i;
+        if (i < tab.length) {
+            tableList += `
                     <tr>
                         <td>${tab[i].prenom}</td>
                         <td>${tab[i].nom}</td>
@@ -125,7 +136,6 @@ function AfficheEtudiants(tab) {
                 `;
     }
   }
-
   tbody.innerHTML = tableList;
 }
 
@@ -163,3 +173,37 @@ function AfficheEtudiants(tab) {
     });
   }
   filtre.addEventListener("input", rechercheFilter);
+    AfficheCard(tab) 
+
+// Fonction detail
+window.detailEtd = function (indice) {
+    document.querySelector("#prenomDetail").innerText = etudians[indice].prenom;
+    document.querySelector("#nomDetail").innerText = etudians[indice].nom;
+    document.querySelector("#noteDetail").innerText = etudians[indice].note;
+    document.querySelector("#moyenneDetail").innerText = etudians[indice].moyenne;
+}
+
+// afficher les infos dans le card
+function AfficheCard(tab) {
+    // Déclaration des variable necessaire pour l'affichage de card
+    let sommeNote = 0;
+    let tabMoyenne = [];
+
+
+    for (let i = 0; i < tab.length; i++) {
+        sommeNote += parseInt(tab[i].note);
+        tabMoyenne.push(parseInt(tab[i].moyenne));
+    }
+
+    let max = Math.max(...tabMoyenne);
+
+    someEtd.innerText = sommeNote;
+    // moyennePlusGrand.innerText = max
+    nbrEtd.innerText = tab.length;
+
+    if (max == "-Infinity") {
+        moyenneetd.innerText = 0;
+    } else {
+        moyenneetd.innerText = max;
+    }
+}
