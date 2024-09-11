@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-import { getFirestore, collection, addDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
+import { getFirestore, collection, addDoc, getDocs, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js';
 
 
 // Your web app's Firebase configuration
@@ -30,19 +30,20 @@ const moyenne = document.querySelector("#average");
 const rslt = document.querySelector("#result");
 const tbody = document.querySelector("#tbody")
 
+// Selecteur Card
+const nbrEtd = document.querySelector("#nbrEtudiants");
+const someEtd = document.querySelector("#SommeNotes");
+const moyenneetd = document.querySelector("#MoyenPlusGrand");
 
 // Déclaration des variables
-let etudians = [];
+
 
 // ==================================
 //         Evenement boutton
 // ==================================
 
-// Reccuperation des donnée firebase
-reccuperInfoEtudiant();
-
 // Evenement Ajouter étudiant
-btn.addEventListener("click",(e) => {
+btn.addEventListener("click", (e) => {
     e.preventDefault();
     if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
 
@@ -50,11 +51,10 @@ btn.addEventListener("click",(e) => {
         rslt.innerHTML = "Enregistrement reussi"
         rslt.classList.add("text-success");
 
-    }else{
+    } else {
         rslt.innerHTML = "Remplissage des champs obligatoire"
         rslt.classList.add("text-danger");
     }
-    AfficheEtudiants(etudians);
     // Vider les input
     prenom.value = "";
     nom.value = "";
@@ -69,15 +69,24 @@ btn.addEventListener("click",(e) => {
 
 // Reccuperation des donnée
 async function reccuperInfoEtudiant() {
-    const querySnapshot = await getDocs(collection(db, "etudiants"));
-    querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        etudians.push(doc.data());
-        // console.log(doc.id, " => ", doc.data());
-    });
 
-    AfficheEtudiants(etudians);
+    const colRef = collection(db, "etudiants");
+
+    // Écoutez les changements
+    onSnapshot(colRef, (snapshot) => {
+        
+    let etudians = [];
+    
+      snapshot.forEach((doc) => {
+        etudians.push({...doc.data(),id:doc.id})
+      });   
+      console.log(etudians);
+      AfficheEtudiants(etudians);
+    });
+    
 }
+
+reccuperInfoEtudiant();
 
 // Fonction d'ajout d'un étudiant
 async function ajouterEtudiant(name, lastname, score, average) {
@@ -88,12 +97,13 @@ async function ajouterEtudiant(name, lastname, score, average) {
         note: parseInt(score.value),
         moyenne: parseInt(average.value)
     });
-    console.log("Document written with ID: ", docRef.id);
+    reccuperInfoEtudiant();
 }
 
 // Fonction Affiche Tableau
-function AfficheEtudiants (tab) {
+function AfficheEtudiants(tab) {
     const tbody = document.querySelector("#tbody");
+
     let tableList = '';
     for (let i = 0; i < tab.length; i++) {
         let index = i;
@@ -114,4 +124,38 @@ function AfficheEtudiants (tab) {
     }
 
     tbody.innerHTML = tableList;
+    AfficheCard(tab) 
+}
+
+// Fonction detail
+window.detailEtd = function (indice) {
+    document.querySelector("#prenomDetail").innerText = etudians[indice].prenom;
+    document.querySelector("#nomDetail").innerText = etudians[indice].nom;
+    document.querySelector("#noteDetail").innerText = etudians[indice].note;
+    document.querySelector("#moyenneDetail").innerText = etudians[indice].moyenne;
+}
+
+// afficher les infos dans le card
+function AfficheCard(tab) {
+    // Déclaration des variable necessaire pour l'affichage de card
+    let sommeNote = 0;
+    let tabMoyenne = [];
+
+
+    for (let i = 0; i < tab.length; i++) {
+        sommeNote += parseInt(tab[i].note);
+        tabMoyenne.push(parseInt(tab[i].moyenne));
+    }
+
+    let max = Math.max(...tabMoyenne);
+
+    someEtd.innerText = sommeNote;
+    // moyennePlusGrand.innerText = max
+    nbrEtd.innerText = tab.length;
+
+    if (max == "-Infinity") {
+        moyenneetd.innerText = 0;
+    } else {
+        moyenneetd.innerText = max;
+    }
 }
