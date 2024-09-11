@@ -47,7 +47,7 @@ btn.addEventListener("click", (e) => {
     e.preventDefault();
     if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
 
-        ajouterEtudiant(prenom, nom, note, moyenne);
+        ajouterEtudiant(prenom, nom, note, moyenne)
         rslt.innerHTML = "Enregistrement reussi"
         rslt.classList.add("text-success");
 
@@ -75,7 +75,7 @@ async function reccuperInfoEtudiant() {
     // Écoutez les changements
     onSnapshot(colRef, (snapshot) => {
         
-    let etudians = [];
+    let etudians = []
     
       snapshot.forEach((doc) => {
         etudians.push({...doc.data(),id:doc.id})
@@ -100,7 +100,7 @@ async function ajouterEtudiant(name, lastname, score, average) {
     reccuperInfoEtudiant();
     prenom.value = "";
     nom.value = "";
-    note.value = "";
+    note.value = ""
     moyenne.value = ""
 }
 
@@ -108,7 +108,7 @@ async function ajouterEtudiant(name, lastname, score, average) {
 function AfficheEtudiants(tab) {
     const tbody = document.querySelector("#tbody");
 
-    let tableList = '';
+    let tableList = ''
     for (let i = 0; i < tab.length; i++) {
         let index = i;
         if (i < tab.length) {
@@ -155,7 +155,7 @@ window.detailEtd = function (indice) {
 function AfficheCard(tab) {
     // Déclaration des variable necessaire pour l'affichage de card
     let sommeNote = 0;
-    let tabMoyenne = [];
+    let tabMoyenne = []
 
 
     for (let i = 0; i < tab.length; i++) {
@@ -180,7 +180,7 @@ function AfficheCard(tab) {
  window.detailDelate = async function (indice) {
 
     const colRef = collection(db, "etudiants");
-    let etudians = [];
+    let etudians = []
     // Écoutez les changements
     onSnapshot(colRef, (snapshot) => {
       snapshot.forEach((doc) => {
