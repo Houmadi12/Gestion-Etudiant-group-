@@ -219,4 +219,4 @@ function AfficheCard(tab) {
       }
     });
   }
-  filtre.addEventListener("input", rechercheFilter);
+  filtre.addEventListener("input", rechercheFilter)
