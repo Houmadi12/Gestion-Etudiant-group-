@@ -107,7 +107,7 @@ async function ajouterEtudiant(name, lastname, score, average) {
         note: parseInt(score.value),
         moyenne: parseInt(average.value)
     });
-    reccuperInfoEtudiant();
+    reccuperInfoEtudiant()
 }
 
 // Fonction Affiche Tableau
@@ -202,3 +202,48 @@ function AfficheCard(tab) {
         moyenneetd.innerText = max;
     }
 }
+
+
+ window.detailDelate = async function (indice) {
+
+    const colRef = collection(db, "etudiants");
+    let etudians = [];
+    // Écoutez les changements
+    onSnapshot(colRef, (snapshot) => {
+      snapshot.forEach((doc) => {
+        etudians.push({...doc.data(),id:doc.id})
+      });  
+      etudians.forEach(async (element)=>{
+        if (
+          element.nom === etudians[indice].nom &&
+          element.prenom === etudians[indice].prenom &&
+          element.note === etudians[indice].note &&
+          element.moyenne === etudians[indice].moyenne
+        ) {
+                try {
+                    await deleteDoc(doc(db, "etudiants", element.id));
+                    reccuperInfoEtudiant();
+                    console.log("Document supprimé avec succès.");
+                } catch (error) {
+                    console.error("Erreur lors de la suppression du document : ", error);
+                }
+        }
+    })
+    });
+ }
+
+  // Fonction pour filtrer les étudiants
+  function rechercheFilter() {
+    const filterValue = filtre.value.toLowerCase();
+    const rows = tbody.querySelectorAll("tr");
+
+    rows.forEach((row) => {
+      const firstName = row.textContent.toLowerCase();
+      if (firstName.includes(filterValue)) {
+        row.style.display = "";
+      } else {
+        row.style.display = "none";
+      }
+    });
+  }
+  filtre.addEventListener("input", rechercheFilter)
