@@ -1,8 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-analytics.js";
-import {getFirestore,collection,addDoc,getDocs,onSnapshot,deleteDoc,doc}
- from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, onSnapshot, deleteDoc, doc }
+  from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -44,22 +44,22 @@ const filtre = document.getElementById("inputFilter");
 
 // Evenement Ajouter étudiant
 btn.addEventListener("click", (e) => {
-    e.preventDefault();
-    if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
+  e.preventDefault();
+  if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
 
-        ajouterEtudiant(prenom, nom, note, moyenne)
-        rslt.innerHTML = "Enregistrement reussi"
-        rslt.classList.add("text-success");
+    ajouterEtudiant(prenom, nom, note, moyenne)
+    rslt.innerHTML = "Enregistrement reussi"
+    rslt.classList.add("text-success");
 
-    } else {
-        rslt.innerHTML = "Remplissage des champs obligatoire"
-        rslt.classList.add("text-danger");
-    }
-    // Vider les input
-    prenom.value = ""
-    nom.value = "";
-    note.value = "";
-    moyenne.value = "";
+  } else {
+    rslt.innerHTML = "Remplissage des champs obligatoire"
+    rslt.classList.add("text-danger");
+  }
+  // Vider les input
+  prenom.value = ""
+  nom.value = "";
+  note.value = "";
+  moyenne.value = "";
 })
 
 
@@ -70,49 +70,49 @@ btn.addEventListener("click", (e) => {
 // Reccuperation des donnée
 async function reccuperInfoEtudiant() {
 
-    const colRef = collection(db, "etudiants");
+  const colRef = collection(db, "etudiants");
 
-    // Écoutez les changements
-    onSnapshot(colRef, (snapshot) => {
-        
+  // Écoutez les changements
+  onSnapshot(colRef, (snapshot) => {
+
     let etudians = []
-    
-      snapshot.forEach((doc) => {
-        etudians.push({...doc.data(),id:doc.id})
-      });   
-      console.log(etudians);
-      AfficheEtudiants(etudians)
+
+    snapshot.forEach((doc) => {
+      etudians.push({ ...doc.data(), id: doc.id })
     });
-    
+    console.log(etudians);
+    AfficheEtudiants(etudians)
+  });
+
 }
 
 reccuperInfoEtudiant();
 
 // Fonction d'ajout d'un étudiant
 async function ajouterEtudiant(name, lastname, score, average) {
-    // Add a new document with a generated id.
-    const docRef = await addDoc(collection(db, "etudiants"), {
-        prenom: name.value,
-        nom: lastname.value,
-        note: parseInt(score.value),
-        moyenne: parseInt(average.value)
-    });
-    reccuperInfoEtudiant();
-    prenom.value = "";
-    nom.value = "";
-    note.value = ""
-    moyenne.value = ""
+  // Add a new document with a generated id.
+  const docRef = await addDoc(collection(db, "etudiants"), {
+    prenom: name.value,
+    nom: lastname.value,
+    note: parseInt(score.value),
+    moyenne: parseInt(average.value)
+  });
+  reccuperInfoEtudiant();
+  prenom.value = "";
+  nom.value = "";
+  note.value = ""
+  moyenne.value = ""
 }
 
 // Fonction Affiche Tableau
 function AfficheEtudiants(tab) {
-    const tbody = document.querySelector("#tbody");
+  const tbody = document.querySelector("#tbody");
 
-    let tableList = ''
-    for (let i = 0; i < tab.length; i++) {
-        let index = i;
-        if (i < tab.length) {
-            tableList += `
+  let tableList = ''
+  for (let i = 0; i < tab.length; i++) {
+    let index = i;
+    if (i < tab.length) {
+      tableList += `
                     <tr>
                         <td>${tab[i].prenom}</td>
                         <td>${tab[i].nom}</td>
@@ -126,97 +126,114 @@ function AfficheEtudiants(tab) {
     }
   }
 
-    tbody.innerHTML = tableList;
-    AfficheCard(tab) 
+  tbody.innerHTML = tableList;
+  AfficheCard(tab)
 }
 
 // Fonction detail
 window.detailEtd = function (indice) {
-    const colRef = collection(db, "etudiants");
+  const colRef = collection(db, "etudiants");
 
-    // Écoutez les changements
-    onSnapshot(colRef, (snapshot) => {
-        
+  // Écoutez les changements
+  onSnapshot(colRef, (snapshot) => {
+
     let etudians = []
-    
-      snapshot.forEach((doc) => {
-        etudians.push({...doc.data(),id:doc.id})
-      });   
-    
-      document.querySelector("#prenomDetail").innerText = etudians[indice].prenom;
-      document.querySelector("#nomDetail").innerText = etudians[indice].nom;
-      document.querySelector("#noteDetail").innerText = etudians[indice].note;
-      document.querySelector("#moyenneDetail").innerText = etudians[indice].moyenne;
 
+    snapshot.forEach((doc) => {
+      etudians.push({ ...doc.data(), id: doc.id })
     });
+
+    document.querySelector("#prenomDetail").innerText = etudians[indice].prenom;
+    document.querySelector("#nomDetail").innerText = etudians[indice].nom;
+    document.querySelector("#noteDetail").innerText = etudians[indice].note;
+    document.querySelector("#moyenneDetail").innerText = etudians[indice].moyenne;
+
+  });
 }
 
 // afficher les infos dans le card
 function AfficheCard(tab) {
-    // Déclaration des variable necessaire pour l'affichage de card
-    let sommeNote = 0;
-    let tabMoyenne = []
+  // Déclaration des variable necessaire pour l'affichage de card
+  let sommeNote = 0;
+  let tabMoyenne = []
 
 
-    for (let i = 0; i < tab.length; i++) {
-        sommeNote += parseInt(tab[i].note);
-        tabMoyenne.push(parseInt(tab[i].moyenne));
-    }
+  for (let i = 0; i < tab.length; i++) {
+    sommeNote += parseInt(tab[i].note);
+    tabMoyenne.push(parseInt(tab[i].moyenne));
+  }
 
-    let max = Math.max(...tabMoyenne);
+  let max = Math.max(...tabMoyenne);
 
-    someEtd.innerText = sommeNote;
-    // moyennePlusGrand.innerText = max
-    nbrEtd.innerText = tab.length;
+  someEtd.innerText = sommeNote;
+  // moyennePlusGrand.innerText = max
+  nbrEtd.innerText = tab.length;
 
-    if (max == "-Infinity") {
-        moyenneetd.innerText = 0;
-    } else {
-        moyenneetd.innerText = max
-    }
+  if (max == "-Infinity") {
+    moyenneetd.innerText = 0;
+  } else {
+    moyenneetd.innerText = max
+  }
 }
 
 
- window.detailDelate = async function (indice) {
+window.detailDelate = async function (indice) {
 
-    const colRef = collection(db, "etudiants");
-    let etudians = []
-    // Écoutez les changements
-    onSnapshot(colRef, (snapshot) => {
-      snapshot.forEach((doc) => {
-        etudians.push({...doc.data(),id:doc.id})
-      });  
-      etudians.forEach(async (element)=>{
-        if (
-          element.nom === etudians[indice].nom &&
-          element.prenom === etudians[indice].prenom &&
-          element.note === etudians[indice].note &&
-          element.moyenne === etudians[indice].moyenne
-        ) {
-                try {
-                    await deleteDoc(doc(db, "etudiants", element.id));
-                    reccuperInfoEtudiant();
-                    console.log("Document supprimé avec succès.");
-                } catch (error) {
-                    console.error("Erreur lors de la suppression du document : ", error)
-                }
+  const colRef = collection(db, "etudiants");
+  let etudians = []
+  // Écoutez les changements
+  onSnapshot(colRef, (snapshot) => {
+    snapshot.forEach((doc) => {
+      etudians.push({ ...doc.data(), id: doc.id })
+    });
+    etudians.forEach(async (element) => {
+      if (
+        element.nom === etudians[indice].nom &&
+        element.prenom === etudians[indice].prenom &&
+        element.note === etudians[indice].note &&
+        element.moyenne === etudians[indice].moyenne
+      ) {
+        try {
+          await deleteDoc(doc(db, "etudiants", element.id));
+          reccuperInfoEtudiant();
+          console.log("Document supprimé avec succès.");
+        } catch (error) {
+          console.error("Erreur lors de la suppression du document : ", error)
         }
-    })
-    });
- }
-
-  // Fonction pour filtrer les étudiants
-  function rechercheFilter() {
-    const filterValue = filtre.value.toLowerCase();
-    const rows = tbody.querySelectorAll("tr");
-
-    rows.forEach((row) => {
-      const firstName = row.textContent.toLowerCase();
-      if (firstName.includes(filterValue)) {
-        row.style.display = "";
-      } else {
-        row.style.display = "none";
       }
-    });
-  }
-  filtre.addEventListener("input", rechercheFilter)
+    })
+  });
+}
+
+// Fonction pour filtrer les étudiants
+function rechercheFilter() {
+  const filterValue = filtre.value.toLowerCase();
+  const rows = tbody.querySelectorAll("tr");
+
+  rows.forEach((row) => {
+    const firstName = row.textContent.toLowerCase();
+    if (firstName.includes(filterValue)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+}
+filtre.addEventListener("input", rechercheFilter)
+
+
+
+
+/**
+ * ==========================================================
+ *              Configuration des inscriptions
+ * ==========================================================
+ */
+
+// Selecteurs
+const btnInscr = document.querySelector("#inscription");
+
+
+btnInscr.addEventListener("click", (e) => {
+  alert('Bonjour');
+})
