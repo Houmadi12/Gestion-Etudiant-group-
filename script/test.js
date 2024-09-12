@@ -61,3 +61,20 @@ function card(tab) {
 
   nbrEtudiant.innerHTML = tab.length;
 }
+
+// Mariama code filtre
+
+// Fonction pour filtrer les étudiants
+function rechercheFilter() {
+  const filterValue = filtre.value.toLowerCase();
+  const rows = tbody.querySelectorAll("tr");
+
+  rows.forEach((row) => {
+    const firstName = row.textContent.toLowerCase();
+    if (firstName.includes(filterValue)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  });
+}

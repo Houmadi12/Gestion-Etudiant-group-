@@ -46,6 +46,9 @@ const modifmoyenne = document.querySelector("#moyenneEdit");
 
 // Déclaration des variables
 const filtre = document.getElementById("inputFilter");
+let allStudents = [];
+let actuelPage = 1;
+const studentsPerPage = 5;
 
 // ==================================
 //         Evenement boutton
@@ -90,7 +93,7 @@ async function reccuperInfoEtudiant() {
       etudians.push({ ...doc.data(), id: doc.id })
     });
     console.log(etudians);
-    AfficheEtudiants(etudians)
+    afficherEtudiants(etudians)
   });
 
 }
@@ -269,28 +272,32 @@ window.detailDelate = async function (indice) {
   });
 }
 
-// Fonction pour filtrer les étudiants
-function rechercheFilter() {
-  const filterValue = filtre.value.toLowerCase();
-  const rows = tbody.querySelectorAll("tr");
+async function filterEtudiants(e) {
 
-  rows.forEach((row) => {
-    const firstName = row.textContent.toLowerCase();
-    if (firstName.includes(filterValue)) {
-      row.style.display = "";
-    } else {
-      row.style.display = "none";
-    }
-  });
+  const searchString = e.target.value.toLowerCase();
+
+  try {
+    const colRef = collection(db, "etudiants");
+    const snapshot = await getDocs(colRef);
+
+    allStudents = [];
+    snapshot.forEach((doc) => {
+      allStudents.push({ ...doc.data(), id: doc.id });
+    });
+
+  let filterData = allStudents.filter(el => el.prenom.toLowerCase().includes(searchString));
+     // Afficher la première page des étudiants
+     afficherEtudiants(filterData);
+} catch (error) {
+    console.error("Erreur lors de la récupération des étudiants :", error);
+  }
 }
-filtre.addEventListener("input", rechercheFilter);
+
+filtre.addEventListener("input", filterEtudiants);
 
 
 
 // --------------------------pagination------
-let allStudents = [];
-let actuelPage = 1;
-const studentsPerPage = 5;
 
 async function reccuperInfo() {
   try {
@@ -311,13 +318,14 @@ async function reccuperInfo() {
 
 reccuperInfo();
 
-function afficherEtudiants() {
+function afficherEtudiants(tab) {
   // Calculer les indices de début et de fin pour la page actuelle
   const startIndex = (actuelPage - 1) * studentsPerPage;
   const endIndex = startIndex + studentsPerPage;
 
   // Découper le tableau pour obtenir la page actuelle des étudiants
-  const paginatedStudents = allStudents.slice(startIndex, endIndex);
+  const paginatedStudents = tab.slice(startIndex, endIndex);
+  // const paginatedStudents = allStudents.slice(startIndex, endIndex);
 
   // Afficher les étudiants dans le tableau
   AfficheEtudiants(paginatedStudents);
@@ -337,18 +345,46 @@ function mettreAJourControlesPagination() {
   document.getElementById("pageInfo").innerText = `Page ${actuelPage} sur ${totalPages}`;
 }
 
-document.getElementById('prevPage').addEventListener('click', () => {
+document.getElementById('prevPage').addEventListener('click', async () => {
   if (actuelPage > 1) {
     actuelPage--;
-    afficherEtudiants();
+    try {
+      const colRef = collection(db, "etudiants");
+      const snapshot = await getDocs(colRef);
+  
+      allStudents = [];
+      snapshot.forEach((doc) => {
+        allStudents.push({ ...doc.data(), id: doc.id });
+      });
+  
+      // Afficher la première page des étudiants
+      afficherEtudiants(allStudents);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des étudiants :", error);
+    }
+    // afficherEtudiants(etudians);
   }
 });
 
-document.getElementById('nextPage').addEventListener('click', () => {
+document.getElementById('nextPage').addEventListener('click', async () => {
   const totalPages = Math.ceil(allStudents.length / studentsPerPage);
   if (actuelPage < totalPages) {
     actuelPage++;
-    afficherEtudiants();
+    try {
+      const colRef = collection(db, "etudiants");
+      const snapshot = await getDocs(colRef);
+  
+      allStudents = [];
+      snapshot.forEach((doc) => {
+        allStudents.push({ ...doc.data(), id: doc.id });
+      });
+  
+      // Afficher la première page des étudiants
+      afficherEtudiants(allStudents);
+    } catch (error) {
+      console.error("Erreur lors de la récupération des étudiants :", error);
+    }
+    // afficherEtudiants(etudians);
   }
 });
 
