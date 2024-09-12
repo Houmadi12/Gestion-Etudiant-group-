@@ -59,7 +59,7 @@ btn.addEventListener("click", (e) => {
     ajouterEtudiant(prenom, nom, note, moyenne)
     rslt.innerHTML = "Enregistrement reussi"
     rslt.classList.add("text-success");
-    setTimeout(()=>{rslt.innerHTML = "Veuillez re-enregistrer"},"1000");
+    setTimeout(() => { rslt.innerHTML = "Veuillez re-enregistrer" }, "1000");
   } else {
     rslt.innerHTML = "Remplissage des champs obligatoire"
     rslt.classList.add("text-danger");
@@ -115,13 +115,13 @@ async function ajouterEtudiant(name, lastname, score, average) {
 
 // Fonction Affiche Tableau
 function AfficheEtudiants(tab) {
-    const tbody = document.querySelector("#tbody");
+  const tbody = document.querySelector("#tbody");
 
-    let tableList = ''
-    for (let i = 0; i < tab.length; i++) {
-        let index = i;
-        if (i < tab.length) {
-            tableList += `
+  let tableList = ''
+  for (let i = 0; i < tab.length; i++) {
+    let index = i;
+    if (i < tab.length) {
+      tableList += `
                     <tr>
                         <td>${tab[i].prenom}</td>
                         <td>${tab[i].nom}</td>
@@ -134,7 +134,7 @@ function AfficheEtudiants(tab) {
                 `;
     }
   }
-  card(tab);
+  card();
   tbody.innerHTML = tableList;
 }
 
@@ -156,128 +156,118 @@ window.modifEtd = function (indice) {
     modifmoyenne.value = etudians[indice].moyenne;
 
     document.querySelector("#modif-btn").addEventListener("click", async (e) => {
-        e.preventDefault();
-        const resulModif = document.querySelector("#resltMdf");
+      e.preventDefault();
+      const resulModif = document.querySelector("#resltMdf");
 
-        for (let i = 0; i < etudians.length; i++) {
-             
-          if (etudians[i].id === etudians[indice].id) {
+      for (let i = 0; i < etudians.length; i++) {
 
-            const washingtonRef = doc(db, "etudiants", etudians[i].id);
+        if (etudians[i].id === etudians[indice].id) {
 
-            // Set the "capital" field of the city 'DC'
-            await updateDoc(washingtonRef, {
-              prenom: modifPrenom.value,
-              nom: modifnom.value,
-              note: modifnote.value,
-              moyenne: modifmoyenne.value
-            });
+          const washingtonRef = doc(db, "etudiants", etudians[i].id);
 
-            resulModif.innerHTML = "Modification reussi";
-            resulModif.classList.add("text-success")
-            modifPrenom.value = "";
-            modifnom.value = "";
-            modifnote.value = "";
-            modifmoyenne.value = "";
-          }
+          // Set the "capital" field of the city 'DC'
+          await updateDoc(washingtonRef, {
+            prenom: modifPrenom.value,
+            nom: modifnom.value,
+            note: modifnote.value,
+            moyenne: modifmoyenne.value
+          });
+
+          resulModif.innerHTML = "Modification reussi";
+          resulModif.classList.add("text-success")
+          modifPrenom.value = "";
+          modifnom.value = "";
+          modifnote.value = "";
+          modifmoyenne.value = "";
         }
-      });   
+      }
+    });
   });
 };
 
 
-function card(tab) {
+// Fonction d'affichage de card
+function card() {
+
   const SommeNote = document.querySelector("#SommeNotes");
   const PlusGrandeMoyenne = document.querySelector("#MoyenPlusGrand");
   let nbrEtudiant = document.getElementById("nbrEtudiants");
   let Tableau = [];
   let somme = 0;
-  for (let i = 0; i < tab.length; i++) {
-    somme += parseInt(tab[i].note);
-    Tableau.push(parseInt(tab[i].moyenne));
-  }
 
-  let num = Math.max(...Tableau);
-  SommeNote.innerHTML = somme;
-  PlusGrandeMoyenne.innerHTML = num;
+  const colRef = collection(db, "etudiants");
 
-  nbrEtudiant.innerHTML = tab.length;
+  // Écoutez les changements
+  onSnapshot(colRef, (snapshot) => {
+
+    let etudians = []
+
+    snapshot.forEach((doc) => {
+      etudians.push({ ...doc.data(), id: doc.id })
+    });
+
+    for (let i = 0; i < etudians.length; i++) {
+      somme += parseInt(etudians[i].note);
+      Tableau.push(parseInt(etudians[i].moyenne));
+    }
+
+    let num = Math.max(...Tableau);
+    SommeNote.innerHTML = somme;
+    PlusGrandeMoyenne.innerHTML = num;
+
+    nbrEtudiant.innerHTML = etudians.length;
+
+  });
 }
 
 // Fonction detail
 window.detailEtd = function (indice) {
-    const colRef = collection(db, "etudiants");
+  const colRef = collection(db, "etudiants");
 
-    // Écoutez les changements
-    onSnapshot(colRef, (snapshot) => {
-        
+  // Écoutez les changements
+  onSnapshot(colRef, (snapshot) => {
+
     let etudians = []
-    
-      snapshot.forEach((doc) => {
-        etudians.push({...doc.data(),id:doc.id})
-      });   
-    
-      document.querySelector("#prenomDetail").innerText = etudians[indice].prenom;
-      document.querySelector("#nomDetail").innerText = etudians[indice].nom;
-      document.querySelector("#noteDetail").innerText = etudians[indice].note;
-      document.querySelector("#moyenneDetail").innerText = etudians[indice].moyenne;
 
+    snapshot.forEach((doc) => {
+      etudians.push({ ...doc.data(), id: doc.id })
     });
+
+    document.querySelector("#prenomDetail").innerText = etudians[indice].prenom;
+    document.querySelector("#nomDetail").innerText = etudians[indice].nom;
+    document.querySelector("#noteDetail").innerText = etudians[indice].note;
+    document.querySelector("#moyenneDetail").innerText = etudians[indice].moyenne;
+
+  });
 }
 
-// afficher les infos dans le card
-// function AfficheCard(tab) {
-//     // Déclaration des variable necessaire pour l'affichage de card
-//     let sommeNote = 0;
-//     let tabMoyenne = [];
+window.detailDelate = async function (indice) {
 
-
-//     for (let i = 0; i < tab.length; i++) {
-//         sommeNote += parseInt(tab[i].note);
-//         tabMoyenne.push(parseInt(tab[i].moyenne));
-//     }
-
-//     let max = Math.max(...tabMoyenne);
-
-//     someEtd.innerText = sommeNote;
-//     // moyennePlusGrand.innerText = max
-//     nbrEtd.innerText = tab.length;
-
-//     if (max == "-Infinity") {
-//         moyenneetd.innerText = 0;
-//     } else {
-//         moyenneetd.innerText = max
-//     }
-// }
-
-
- window.detailDelate = async function (indice) {
-
-    const colRef = collection(db, "etudiants");
-    let etudians = []
-    // Écoutez les changements
-    onSnapshot(colRef, (snapshot) => {
-      snapshot.forEach((doc) => {
-        etudians.push({...doc.data(),id:doc.id})
-      });  
-      etudians.forEach(async (element)=>{
-        if (
-          element.nom === etudians[indice].nom &&
-          element.prenom === etudians[indice].prenom &&
-          element.note === etudians[indice].note &&
-          element.moyenne === etudians[indice].moyenne
-        ) {
-                try {
-                    await deleteDoc(doc(db, "etudiants", element.id));
-                    reccuperInfoEtudiant();
-                    console.log("Document supprimé avec succès.");
-                } catch (error) {
-                    console.error("Erreur lors de la suppression du document : ", error)
-                }
-        }
-    })
+  const colRef = collection(db, "etudiants");
+  let etudians = []
+  // Écoutez les changements
+  onSnapshot(colRef, (snapshot) => {
+    snapshot.forEach((doc) => {
+      etudians.push({ ...doc.data(), id: doc.id })
     });
- }
+    etudians.forEach(async (element) => {
+      if (
+        element.nom === etudians[indice].nom &&
+        element.prenom === etudians[indice].prenom &&
+        element.note === etudians[indice].note &&
+        element.moyenne === etudians[indice].moyenne
+      ) {
+        try {
+          await deleteDoc(doc(db, "etudiants", element.id));
+          reccuperInfoEtudiant();
+          console.log("Document supprimé avec succès.");
+        } catch (error) {
+          console.error("Erreur lors de la suppression du document : ", error)
+        }
+      }
+    })
+  });
+}
 
 // Fonction pour filtrer les étudiants
 function rechercheFilter() {
@@ -293,21 +283,73 @@ function rechercheFilter() {
     }
   });
 }
-filtre.addEventListener("input", rechercheFilter)
+filtre.addEventListener("input", rechercheFilter);
 
 
 
+// --------------------------pagination------
+let allStudents = [];
+let actuelPage = 1;
+const studentsPerPage = 5;
 
-/**
- * ==========================================================
- *              Configuration des inscriptions
- * ==========================================================
- */
+async function reccuperInfo() {
+  try {
+    const colRef = collection(db, "etudiants");
+    const snapshot = await getDocs(colRef);
 
-// Selecteurs
-const btnInscr = document.querySelector("#inscription");
+    allStudents = [];
+    snapshot.forEach((doc) => {
+      allStudents.push({ ...doc.data(), id: doc.id });
+    });
+
+    // Afficher la première page des étudiants
+    afficherEtudiants(allStudents);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des étudiants :", error);
+  }
+}
+
+reccuperInfo();
+
+function afficherEtudiants() {
+  // Calculer les indices de début et de fin pour la page actuelle
+  const startIndex = (actuelPage - 1) * studentsPerPage;
+  const endIndex = startIndex + studentsPerPage;
+
+  // Découper le tableau pour obtenir la page actuelle des étudiants
+  const paginatedStudents = allStudents.slice(startIndex, endIndex);
+
+  // Afficher les étudiants dans le tableau
+  AfficheEtudiants(paginatedStudents);
+
+  // Mettre à jour les contrôles de pagination
+  mettreAJourControlesPagination();
+}
+
+function mettreAJourControlesPagination() {
+  const totalPages = Math.ceil(allStudents.length / studentsPerPage);
+
+  // Mettre à jour les boutons Précédent et Suivant
+  document.getElementById('prevPage').disabled = actuelPage === 1;
+  document.getElementById('nextPage').disabled = actuelPage === totalPages;
+
+  // Mettre à jour l'affichage du numéro de la page
+  document.getElementById("pageInfo").innerText = `Page ${actuelPage} sur ${totalPages}`;
+}
+
+document.getElementById('prevPage').addEventListener('click', () => {
+  if (actuelPage > 1) {
+    actuelPage--;
+    afficherEtudiants();
+  }
+});
+
+document.getElementById('nextPage').addEventListener('click', () => {
+  const totalPages = Math.ceil(allStudents.length / studentsPerPage);
+  if (actuelPage < totalPages) {
+    actuelPage++;
+    afficherEtudiants();
+  }
+});
 
 
-btnInscr.addEventListener("click", (e) => {
-  alert('Bonjour');
-})
