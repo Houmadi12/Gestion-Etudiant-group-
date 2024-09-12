@@ -31,26 +31,37 @@ const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
 // Selecteur
-let inscrp = document.querySelector("#inscription");
+const inscrp = document.querySelector("#inscription");
+const name = document.querySelector("#nom");
+const email = document.querySelector("#email");
+const password = document.querySelector("#password") 
+
 
 inscrp.addEventListener("click", (e) => {
-        e.preventDefault();
-        if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
+  e.preventDefault(); 
+  name.value = "Ambdou";
+  email.value = "Soilihi@gmail.com";
+  
+
+}) 
+// inscrp.addEventListener("click", (e) => {
+        // e.preventDefault();
+        // if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
       
-          ajouterEtudiant(prenom, nom, note, moyenne)
-          rslt.innerHTML = "Enregistrement reussi"
-          rslt.classList.add("text-success");
-          setTimeout(()=>{rslt.innerHTML = "Veuillez re-enregistrer"},"1000");
-        } else {
-          rslt.innerHTML = "Remplissage des champs obligatoire"
-          rslt.classList.add("text-danger");
-        }
-        // Vider les input
-        prenom.value = ""
-        nom.value = "";
-        note.value = "";
-        moyenne.value = "";      
-})
+        //   ajouterEtudiant(prenom, nom, note, moyenne)
+        //   rslt.innerHTML = "Enregistrement reussi"
+        //   rslt.classList.add("text-success");
+        //   setTimeout(()=>{rslt.innerHTML = "Veuillez re-enregistrer"},"1000");
+        // } else {
+        //   rslt.innerHTML = "Remplissage des champs obligatoire"
+        //   rslt.classList.add("text-danger");
+        // }
+        // // Vider les input
+        // prenom.value = ""
+        // nom.value = "";
+        // note.value = "";
+        // moyenne.value = "";      
+// })
 
 async function ajouterEtudiant() {
     // Add a new document with a generated id.
