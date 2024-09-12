@@ -98,16 +98,14 @@
                       <div class="row">
                         <div class="col-md-6">
                           <label for="score">Note</label>
-                          <input type="number" class="form-control" min="0" max="20" id="score" placeholder="0">
-                          <div id="verifie"></div>
+                          <input type="number" class="form-control" oninput="verifieNote()" id="score" placeholder="0">
                         </div>
                         <div class="col-md-6">
                           <label for="average">Moyen</label>
-                          <input type="number" min="0" max="20" class="form-control" id="average" placeholder="0">
+                          <input type="number" min="0" max="20" oninput="verifieMoyenne()"  class="form-control" id="average" placeholder="0">
                         </div>
                       </div>
                     </div>
-                    <div id="result"></div>
                     <div class="col-12 d-flex justify-content-center">
                       <button type="submit" class="btn btn-success mb-3" id="btn1">Ajouter</button>
                     </div>

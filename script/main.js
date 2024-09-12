@@ -43,6 +43,7 @@ const modifPrenom = document.querySelector("#prenomEdit");
 const modifnom = document.querySelector("#nomEdit");
 const modifnote = document.querySelector("#noteEdit");
 const modifmoyenne = document.querySelector("#moyenneEdit");
+const verfie = document.querySelector("#verifie");
 
 // Déclaration des variables
 const filtre = document.getElementById("inputFilter");
@@ -57,27 +58,68 @@ const studentsPerPage = 5;
 // Evenement Ajouter étudiant
 btn.addEventListener("click", (e) => {
   e.preventDefault();
-  if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
+  alert("bonjour");
 
-    ajouterEtudiant(prenom, nom, note, moyenne)
-    rslt.innerHTML = "Enregistrement reussi"
-    rslt.classList.add("text-success");
-    setTimeout(() => { rslt.innerHTML = "Veuillez re-enregistrer" }, "1000");
-  } else {
-    rslt.innerHTML = "Remplissage des champs obligatoire"
-    rslt.classList.add("text-danger");
-  }
-  // Vider les input
-  prenom.value = ""
-  nom.value = "";
-  note.value = "";
-  moyenne.value = "";
+  // if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
+
+  //   ajouterEtudiant(prenom, nom, note, moyenne)
+  //   rslt.innerHTML = "Enregistrement reussi"
+  //   rslt.classList.add("text-success");
+  //   setTimeout(() => { rslt.innerHTML = "Veuillez re-enregistrer" }, "1000");
+  // } else {
+  //   rslt.innerHTML = "Remplissage des champs obligatoire"
+  //   rslt.classList.add("text-danger");
+  // }
+  // // Vider les input
+  // prenom.value = ""
+  // nom.value = "";
+  // note.value = "";
+  // moyenne.value = "";
 })
 
 
 // =======================================
 //             Fonctions
 // =======================================
+
+// Verifie note
+window.verifieNote = function(){
+  const valeur = note.value;
+  
+  if(parseInt(valeur)>=0 && parseInt(valeur)<=20){
+    setTimeout(()=>{
+      note.classList.remove("border-danger");
+      btn.classList.remove("disabled");
+      note.classList.add("border-success")
+    },"1000");
+  }else{
+    setTimeout(()=>{
+      note.classList.add("border-danger");
+      btn.classList.add("disabled")
+    },"1000");
+  }
+
+}
+
+// Verifie moyenne
+window.verifieMoyenne = function(){
+  const valeur = moyenne.value;
+  
+  if(parseInt(valeur)>=0 && parseInt(valeur)<=20){
+    setTimeout(()=>{
+      moyenne.classList.remove("border-danger");
+      btn.classList.remove("disabled");
+      moyenne.classList.add("border-success")
+    },"1000");
+  }else{
+    setTimeout(()=>{
+      moyenne.classList.add("border-danger");
+      btn.classList.add("disabled")
+    },"1000");
+  }
+
+}
+
 
 // Reccuperation des donnée
 async function reccuperInfoEtudiant() {
