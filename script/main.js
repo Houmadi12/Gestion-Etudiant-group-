@@ -120,6 +120,25 @@ window.verifieMoyenne = function(){
 
 }
 
+// Verifie note Modifier
+window.verifieNoteModif = function(){
+  const valeur =  modifmoyenne.value;
+  
+  if(parseInt(valeur)>=0 && parseInt(valeur)<=20){
+    setTimeout(()=>{
+      modifmoyenne.classList.remove("border-danger");
+      btn.classList.remove("disabled");
+      modifmoyenne.classList.add("border-success")
+    },"1000");
+  }else{
+    setTimeout(()=>{
+      modifmoyenne.classList.add("border-danger");
+      document.querySelector("#modif-btn").classList.add("disabled")
+    },"1000");
+  }
+
+}
+
 
 // Reccuperation des donnée
 async function reccuperInfoEtudiant() {
@@ -258,7 +277,12 @@ function card() {
 
     let num = Math.max(...Tableau);
     SommeNote.innerHTML = somme;
-    PlusGrandeMoyenne.innerHTML = num;
+    
+    if(num == "-Infinity"){
+      PlusGrandeMoyenne.innerHTML = 0;
+    }else{
+      PlusGrandeMoyenne.innerHTML = num;
+    }
 
     nbrEtudiant.innerHTML = etudians.length;
 
