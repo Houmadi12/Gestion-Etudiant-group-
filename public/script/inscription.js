@@ -30,45 +30,37 @@ const analytics = getAnalytics(app);
 const db = getFirestore(app);
 
 // Selecteur
-const connexion = document.querySelector("#btn-connexion");
+const inscrp = document.querySelector("#inscription");
+const name = document.querySelector("#nom");
 const email = document.querySelector("#email");
 const password = document.querySelector("#password");
 const respons = document.querySelector("#reponse");
 
-connexion.addEventListener("click", (e) => {
+inscrp.addEventListener("click", (e) => {
   e.preventDefault();
-  let un = email.value;
-  let deux = password.value;
-  connexionUser(un, deux);
+
+  if (name.value == "" && email.value == "" && password.value == "") {
+    respons.innerHTML = "veuiller saisir un champs valide";
+    respons.classList.add("text-danger");
+  } else {
+
+
+    ajouterUser(name.value, email.value, password.value);
+    // ---test---
+    respons.innerHTML = "enregistrement reussie"
+    respons.classList.add("text-success")
+    // -----fin-test---
+    setTimeout(() => {
+      document.location.href = "index.html"
+    }, "1000")
+  }
 });
 
-// fonction de connexion
-
-async function connexionUser(email, password) {
-  let verifi = false;
-  const colRef = collection(db, "users");
-
-  // Écoutez les changements
-  onSnapshot(colRef, (snapshot) => {
-    let utilisateurs = [];
-
-    snapshot.forEach((doc) => {
-      utilisateurs.push({ ...doc.data(), id: doc.id });
-    });
-    // console.log(utilisateurs);
-    utilisateurs.forEach((element) => {
-      if (element.email === email && element.password === password) {
-        verifi = true;
-        // document.location.href ='accueil.html'
-      }
-    });
-    if (verifi === true) {
-      // alert("connexion reussie");
-      document.location.href = "accueil.html";
-    } else {
-        respons.innerHTML="veuillez verifier vos identifiants";
-        respons.classList.add("text-danger");
-
-    }
+async function ajouterUser(name, mail, motDEpasse) {
+  // Add a new document with a generated id.
+  const docRef = await addDoc(collection(db, "users"), {
+    nom: name,
+    email: mail,
+    password: motDEpasse,
   });
 }
