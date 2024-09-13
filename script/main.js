@@ -44,6 +44,7 @@ const modifnom = document.querySelector("#nomEdit");
 const modifnote = document.querySelector("#noteEdit");
 const modifmoyenne = document.querySelector("#moyenneEdit");
 const verfie = document.querySelector("#verifie");
+const deconnexion = document.querySelector("#deconnexion");
 
 // Déclaration des variables
 const filtre = document.getElementById("inputFilter");
@@ -59,22 +60,11 @@ const studentsPerPage = 5;
 btn.addEventListener("click", (e) => {
   e.preventDefault();
   alert("bonjour");
+})
 
-  // if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
-
-  //   ajouterEtudiant(prenom, nom, note, moyenne)
-  //   rslt.innerHTML = "Enregistrement reussi"
-  //   rslt.classList.add("text-success");
-  //   setTimeout(() => { rslt.innerHTML = "Veuillez re-enregistrer" }, "1000");
-  // } else {
-  //   rslt.innerHTML = "Remplissage des champs obligatoire"
-  //   rslt.classList.add("text-danger");
-  // }
-  // // Vider les input
-  // prenom.value = ""
-  // nom.value = "";
-  // note.value = "";
-  // moyenne.value = "";
+deconnexion.addEventListener("click", (e) => {
+  e.preventDefault();
+  document.location.href = "index.html";
 })
 
 
