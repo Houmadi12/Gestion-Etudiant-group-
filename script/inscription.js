@@ -24,7 +24,6 @@ const firebaseConfig = {
   measurementId: "G-56CH56JP3L",
 };
 
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
@@ -34,45 +33,52 @@ const db = getFirestore(app);
 const inscrp = document.querySelector("#inscription");
 const name = document.querySelector("#nom");
 const email = document.querySelector("#email");
-const password = document.querySelector("#password") 
-
+const password = document.querySelector("#password");
+const respons = document.querySelector("#reponse");
 
 inscrp.addEventListener("click", (e) => {
-  e.preventDefault(); 
-  name.value = "Ambdou";
-  email.value = "Soilihi@gmail.com";
-  
+  e.preventDefault();
 
-}) 
+  if (name.value == "" && email.value == "" && password.value == "") {
+    respons.innerHTML = "veuiller saisir un champs valide";
+    respons.classList.add("text-danger");
+  } else {
+
+
+    ajouterUser(name.value, email.value, password.value);
+        // ---test---
+     respons.innerHTML = "enregistrement reussie"
+      respons.classList.add("text-success")
+    // -----fin-test---
+    setTimeout(()=>{
+      document.location.href = "index.html"
+    }, "1000")
+  }
+});
 // inscrp.addEventListener("click", (e) => {
-        // e.preventDefault();
-        // if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
-      
-        //   ajouterEtudiant(prenom, nom, note, moyenne)
-        //   rslt.innerHTML = "Enregistrement reussi"
-        //   rslt.classList.add("text-success");
-        //   setTimeout(()=>{rslt.innerHTML = "Veuillez re-enregistrer"},"1000");
-        // } else {
-        //   rslt.innerHTML = "Remplissage des champs obligatoire"
-        //   rslt.classList.add("text-danger");
-        // }
-        // // Vider les input
-        // prenom.value = ""
-        // nom.value = "";
-        // note.value = "";
-        // moyenne.value = "";      
+// e.preventDefault();
+// if (prenom.value !== "" && nom.value !== "" && note.value !== "" && moyenne.value !== "") {
+
+//   ajouterEtudiant(prenom, nom, note, moyenne)
+//   rslt.innerHTML = "Enregistrement reussi"
+//   rslt.classList.add("text-success");
+//   setTimeout(()=>{rslt.innerHTML = "Veuillez re-enregistrer"},"1000");
+// } else {
+//   rslt.innerHTML = "Remplissage des champs obligatoire"
+//   rslt.classList.add("text-danger");
+// }
+// // Vider les input
+// prenom.value = ""
+// nom.value = "";
+// note.value = "";
+// moyenne.value = "";
 // })
 
-async function ajouterEtudiant() {
-    // Add a new document with a generated id.
-    const docRef = await addDoc(collection(db, "etudiants"), {
-      nom: lastname.value,
-      email:"",
-      password:""
-    });
-    reccuperInfoEtudiant();
-    prenom.value = "";
-    nom.value = "";
-    note.value = ""
-    moyenne.value = ""
-  }
+async function ajouterUser(name, mail, motDEpasse) {
+  // Add a new document with a generated id.
+  const docRef = await addDoc(collection(db, "users"), {
+    nom: name,
+    email: mail,
+    password: motDEpasse,
+  });
+}
